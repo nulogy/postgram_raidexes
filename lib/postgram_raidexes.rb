@@ -1,5 +1,5 @@
 require "postgram_raidexes/version"
+require "postgram_raidexes/railtie" if defined?(Rails)
 
 module PostgramRaidexes
-  # Your code goes here...
 end
