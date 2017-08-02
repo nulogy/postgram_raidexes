@@ -9,15 +9,22 @@ RSpec.describe PostgramRaidexes do
     %q|add_index "users", ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: {"last_name"=>"gin_trgm_ops"}|
   end
 
+  before do
+    migrate_test_app
+  end
+
   it "dumps trigram indexes" do
     expect(dumped_schema_lines).to include_line(users_email_trigram_index_dump)
     expect(dumped_schema_lines).to include_line(users_last_name_trigram_index_dump)
   end
 
-  def test_app_schema_lines
+  def migrate_test_app
     delete_old_schema_file
     setup_test_database
     migrate
+  end
+
+  def test_app_schema_lines
     File.readlines("spec/support/test_app/db/schema.rb")
   end
 
