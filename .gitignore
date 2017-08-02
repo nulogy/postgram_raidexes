@@ -11,5 +11,7 @@
 # rspec failure tracking
 .rspec_status
 
+/spec/support/test_app/db/schema.rb
+
 .env
 .envrc
