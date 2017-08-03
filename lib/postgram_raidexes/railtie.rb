@@ -3,6 +3,8 @@ module PostgramRaidexes
     initializer "postgram_raidexes.postgresql_overrides" do
       break unless using_postgresql?
 
+      raise "Only Rails 4 is supported at this time" unless Rails::VERSION::MAJOR == 4
+
       require "postgram_raidexes/pg_opclass_support"
     end
 
