@@ -5,7 +5,10 @@ module PostgramRaidexes
 
       raise "Only Rails 4 is supported at this time" unless Rails::VERSION::MAJOR == 4
 
-      require "postgram_raidexes/pg_opclass_support"
+      case Rails::VERSION::MINOR
+      when 2
+        require "postgram_raidexes/pg_opclass_support_rails_42"
+      end
     end
 
     def using_postgresql?
