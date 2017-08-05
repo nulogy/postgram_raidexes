@@ -18,6 +18,12 @@ RSpec.describe PostgramRaidexes do
     expect(dumped_schema_lines).to include_line(users_last_name_trigram_index_dump)
   end
 
+  it "doesn't mangle partial indexes" do
+    expected_partial_index = 'add_index "users", ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
+
+    expect(dumped_schema_lines).to include_line(expected_partial_index)
+  end
+
   def migrate_test_app
     delete_old_schema_file
     setup_test_database
@@ -44,7 +50,7 @@ RSpec.describe PostgramRaidexes do
   RSpec::Matchers.define :include_line do |expected_line|
     match do |lines|
       lines.any? do |actual_line|
-        actual_line.include?(expected_line)
+        actual_line.strip == expected_line
       end
     end
   end

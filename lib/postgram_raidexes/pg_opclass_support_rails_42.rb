@@ -126,10 +126,18 @@ module ActiveRecord
               orders = desc_order_columns.any? ? Hash[desc_order_columns.map {|order_column| [order_column, :desc]}] : {}
               where = inddef.scan(/WHERE (.+)$/).flatten[0]
               using = inddef.scan(/USING (.+?) /).flatten[0].to_sym
-              opclasses = Hash[inddef.scan(/\((.+)\)$/).flatten[0].split(',').map do |column_and_opclass|
-                                 column, opclass = column_and_opclass.split(' ').map(&:strip)
-                                 [column, opclass] if opclass
-                               end.compact]
+
+              # only match opclass immediately following a USING clause
+              opclass_matches = inddef.scan(/(?<=USING gin )\((.+)\)$/).flatten[0]
+              opclasses =
+                if opclass_matches
+                  Hash[opclass_matches.split(',').map do |column_and_opclass|
+                   column, opclass = column_and_opclass.split(' ').map(&:strip)
+                   [column, opclass] if opclass
+                 end.compact]
+                else
+                  {}
+                end
 
               IndexDefinition.new(table_name, index_name, unique, column_names, [], orders, where, nil, using, opclasses)
             end
