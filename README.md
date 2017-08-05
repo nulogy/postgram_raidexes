@@ -4,7 +4,7 @@
 
 This gem adds [trigram](https://www.postgresql.org/docs/current/static/pgtrgm.html) index support to Rails [`SchemaDumper`](http://edgeguides.rubyonrails.org/active_record_migrations.html#schema-dumping-and-you).
 
-This repo gemifies code from [GitLabEE](https://gitlab.com/gitlab-org/gitlab-ee), specifically, [this commit](https://gitlab.com/gitlab-org/gitlab-ee/commit/70bf6dc702b6354c3a00d0b81e7d7c10be25ffb8).
+This repo gemifies code from [GitLab EE](https://gitlab.com/gitlab-org/gitlab-ee), specifically, [this commit](https://gitlab.com/gitlab-org/gitlab-ee/commit/70bf6dc702b6354c3a00d0b81e7d7c10be25ffb8).
 
 Currently supports Rails `4.x`.
 
@@ -26,16 +26,21 @@ Or install it yourself as:
 
 ## TODO
 
-- [ ] add helper to enable/disable trigrams
-- [ ] copy over code from GitLabEE
-- [ ] add test app
+- [x] add Rails 4.2 support
+- [ ] add Rails 4.1 support
+- [ ] add note on `DROP EXTENSION pg_trgm CASCADE` when removing trigram support
 - [ ] investigate extending `SchemaDumper`, rather than monkeypatching
 
 ## Usage
 
 1. In a migration, enable the `pg_trgm` extension in postgres:
  ```ruby
-   something_useful
+  class EnableTrigramExtension < ActiveRecord::Migration
+    def up
+      enable_extension :pg_trgm
+    end
+    ...
+  end
  ```
 
 2. Add a trigram index to a text field:
@@ -56,7 +61,7 @@ Or install it yourself as:
   $ rake db:migrate
  ```
 
-4. And you should the `add_index` from (2) in `schema.rb`:
+4. And you should the `add_index` statement from Step 2 in `schema.rb`:
 
  ```ruby
   add_index "users", ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: {"email"=>"gin_trgm_ops"}
