@@ -14,14 +14,16 @@ RSpec.describe PostgramRaidexes do
   end
 
   it "dumps trigram indexes" do
-    expect(dumped_schema_lines).to include_line(users_email_trigram_index_dump)
-    expect(dumped_schema_lines).to include_line(users_last_name_trigram_index_dump)
+    schema_lines = dumped_schema_lines_from_test_app
+
+    expect(schema_lines).to include_line(users_email_trigram_index_dump)
+    expect(schema_lines).to include_line(users_last_name_trigram_index_dump)
   end
 
   it "doesn't mangle partial indexes" do
     expected_partial_index = 'add_index "users", ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
 
-    expect(dumped_schema_lines).to include_line(expected_partial_index)
+    expect(dumped_schema_lines_from_test_app).to include_line(expected_partial_index)
   end
 
   def migrate_test_app
@@ -30,7 +32,7 @@ RSpec.describe PostgramRaidexes do
     migrate
   end
 
-  def test_app_schema_lines
+  def dumped_schema_lines_from_test_app
     File.readlines("spec/support/test_app/db/schema.rb")
   end
 
