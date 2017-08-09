@@ -2,18 +2,18 @@
 
 ## *Post*(gres) (Tri)*gram* *Rai*(ls) (In)*dexes*
 
-This gem adds [trigram](https://www.postgresql.org/docs/current/static/pgtrgm.html) index support to Rails [`SchemaDumper`](http://edgeguides.rubyonrails.org/active_record_migrations.html#schema-dumping-and-you).
+This gem adds [trigram](https://www.postgresql.org/docs/current/static/pgtrgm.html) index support to Rails' [`SchemaDumper`](http://edgeguides.rubyonrails.org/active_record_migrations.html#schema-dumping-and-you).
 
 This repo gemifies code from [GitLab EE](https://gitlab.com/gitlab-org/gitlab-ee), specifically, [this commit](https://gitlab.com/gitlab-org/gitlab-ee/commit/70bf6dc702b6354c3a00d0b81e7d7c10be25ffb8).
 
-Currently supports Rails `4.x`.
+Currently supports Rails `4.1` and `4.2`. Note that Rails 5 now has [native support](https://github.com/rails/rails/pull/23393).
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'postgram_raidexes'
+gem 'postgram_raidexes', git: 'https://github.com/nulogy/postgram_raidexes'
 ```
 
 And then execute:
@@ -23,13 +23,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install postgram_raidexes
-
-## TODO
-
-- [x] add Rails 4.2 support
-- [ ] add Rails 4.1 support
-- [ ] add note on `DROP EXTENSION pg_trgm CASCADE` when removing trigram support
-- [ ] investigate extending `SchemaDumper`, rather than monkeypatching
 
 ## Usage
 
@@ -51,7 +44,7 @@ Or install it yourself as:
    end
 
    def down
-     ...
+     remove_index "users", name: "index_users_on_email_trigram"
    end
  ```
 
@@ -61,21 +54,29 @@ Or install it yourself as:
   $ rake db:migrate
  ```
 
-4. And you should the `add_index` statement from Step 2 in `schema.rb`:
+4. And you should the `add_index` statement from Step 2 in your `schema.rb`:
 
  ```ruby
   add_index "users", ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: {"email"=>"gin_trgm_ops"}
  ```
 
+## TODO
+
+- [ ] add to RubyGems
+- [ ] setup TravisCI
+- [ ] add note on `DROP EXTENSION pg_trgm CASCADE` when removing trigram support
+- [ ] support `gist` indexes
+- [ ] investigate extending `SchemaDumper` (Module.prepend or a Refinement) rather than monkeypatching
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+There is a test application in `spec/support/test_app` (Rails 4.2) that the current tests run against. It contains a simple `User` model with a couple simple trigram indexes. The specs migrate this application, then check its `db/schema.rb` file for the expected `add_index` statements.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/postgram_raidexes.
+Bug reports and pull requests are welcome on GitHub at https://github.com/nulogy/postgram_raidexes.
 
 ## License
 
