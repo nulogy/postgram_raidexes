@@ -20,10 +20,6 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install postgram_raidexes
-
 ## Usage
 
 1. In a migration, enable the `pg_trgm` extension in postgres:
