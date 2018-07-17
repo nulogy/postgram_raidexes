@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-gem "rails", "5.0.7"
+gem "rails", ENV["RAILS_5"] ? "5.0.7" : "4.2.10"
 gem "pg", "0.18.4"
 gem "postgram_raidexes", path: "../../.."
