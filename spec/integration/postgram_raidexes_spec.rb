@@ -31,7 +31,7 @@ RSpec.describe PostgramRaidexes do
 
   def migrate_test_app
     delete_old_schema_file
-    setup_test_database
+    bundle_and_setup_test_database
     migrate
   end
 
@@ -40,8 +40,8 @@ RSpec.describe PostgramRaidexes do
     File.delete(test_schema_path) if File.exist?(test_schema_path)
   end
 
-  def setup_test_database
-    `cd spec/support/test_app && bundle exec rake db:drop db:create`
+  def bundle_and_setup_test_database
+    `cd spec/support/test_app && bundle && bundle exec rake db:drop db:create`
   end
 
   def migrate

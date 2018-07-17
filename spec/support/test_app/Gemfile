@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-gem "rails", "4.2.8"
+gem "rails", "5.0.7"
 gem "pg", "0.18.4"
 gem "postgram_raidexes", path: "../../.."
