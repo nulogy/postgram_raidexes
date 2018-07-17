@@ -3,20 +3,16 @@ module PostgramRaidexes
     initializer "postgram_raidexes.postgresql_overrides" do
       break unless using_postgresql?
 
-      raise "Only Rails 4 and 5 are supported at this time" unless Rails::VERSION::MAJOR == 4 || Rails::VERSION::MAJOR == 5
+      rails_version = Rails::VERSION::STRING
 
-      if Rails::VERSION::MAJOR == 4
-        case Rails::VERSION::MINOR
-        when 1
-          require "postgram_raidexes/pg_opclass_support_rails_41"
-        when 2
-          require "postgram_raidexes/pg_opclass_support_rails_42"
-        end
-      elsif Rails::VERSION::MAJOR == 5
-        case Rails::VERSION::MINOR
-        when 0
-          require "postgram_raidexes/pg_opclass_support_rails_50"
-        end
+      if rails_version.start_with?("4.1")
+        require "postgram_raidexes/pg_opclass_support_rails_41"
+      elsif rails_version.start_with?("4.2")
+        require "postgram_raidexes/pg_opclass_support_rails_42"
+      elsif rails_version.start_with?("5.0")
+        require "postgram_raidexes/pg_opclass_support_rails_50"
+      else
+        raise "Only Rails 4.1, 4.2 and 5.0 are supported at this time"
       end
     end
 

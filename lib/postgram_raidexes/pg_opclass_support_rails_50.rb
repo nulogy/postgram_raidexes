@@ -155,8 +155,16 @@ module ActiveRecord
         protected
 
         def quoted_columns_for_index(column_names, options = {})
+          quoted_columns = Hash[column_names.map { |name| [name, quote_column_name(name).dup] }]
+
           column_opclasses = options[:opclasses] || {}
-          column_names.map {|name| "#{quote_column_name(name)} #{column_opclasses[name]}"}
+          quoted_columns.each { |name, column| column << " #{column_opclasses[name]}" }
+
+          if supports_index_sort_order?
+            quoted_columns = add_index_sort_order(quoted_columns, options)
+          end
+
+          quoted_columns.values
         end
       end
     end
