@@ -66,9 +66,16 @@ And then execute:
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies.
 
-There is a test application in `spec/support/test_app` (Rails 4.2) that the current tests run against. It contains a simple `User` model with a couple simple trigram indexes. The specs migrate this application, then check its `db/schema.rb` file for the expected `add_index` statements.
+### Running tests
+To run the tests, first export a username and password for your DB using ` export TEST_APP_USER=youruserhere;export TEST_APP_PW=yourpasswordhere`
+
+Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+There is a test application in `spec/support/test_app` that the current tests run against. It contains a simple `User` model with a couple simple trigram indexes. The specs migrate this application, then check its `db/schema.rb` file for the expected `add_index` statements.
+
+By default, the tests will be run using Rails 5. To run the tests in Rails 4 mode (4.2.10), use `RAILS_4=true rake spec`
 
 ## Contributing
 
