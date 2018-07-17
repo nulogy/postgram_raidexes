@@ -15,7 +15,7 @@ module PostgramRaidexes
       elsif Rails::VERSION::MAJOR == 5
         case Rails::VERSION::MINOR
         when 0
-          require "postgram_raidexes/pg_opclass_support_rails_42"
+          require "postgram_raidexes/pg_opclass_support_rails_50"
         end
       end
     end
