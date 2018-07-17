@@ -2,7 +2,11 @@ require "spec_helper"
 
 RSpec.describe PostgramRaidexes do
   before do
-    migrate_test_app
+    # This is necessary to use the rails version specified in the test app gemfile lock, rather than
+    # the rails version in the main gemspec
+    ::Bundler.with_original_env do
+      migrate_test_app
+    end
   end
 
   it "dumps trigram indicies" do
@@ -49,6 +53,7 @@ RSpec.describe PostgramRaidexes do
   def migrate_test_app
     delete_old_schema_file
     bundle_and_setup_test_database
+    print_rails_version
     migrate
   end
 
@@ -58,7 +63,11 @@ RSpec.describe PostgramRaidexes do
   end
 
   def bundle_and_setup_test_database
-    `cd spec/support/test_app && bundle && bundle exec rake db:drop db:create`
+    `cd spec/support/test_app && bundle && bin/rails db:environment:set RAILS_ENV=development && bundle exec rake db:drop db:create`
+  end
+
+  def print_rails_version
+    puts "Rails version used for running migrations: #{`cd spec/support/test_app && bundle exec rails --version`}"
   end
 
   def migrate
