@@ -1,7 +1,7 @@
 require "spec_helper"
 
 RSpec.describe PostgramRaidexes do
-  before do
+  before :context do
     # This is necessary to use the rails version specified in the test app gemfile lock, rather than
     # the rails version in the main gemspec
     ::Bundler.with_original_env do
@@ -10,12 +10,12 @@ RSpec.describe PostgramRaidexes do
   end
 
   it "dumps trigram indicies" do
-    unless ENV["RAILS_4"]
-      users_email_index = 't.index ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: { email: "gin_trgm_ops" }'
-      users_last_name_index = 't.index ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: { last_name: "gin_trgm_ops" }'
-    else
+    if ENV["RAILS_4"]
       users_email_index = 'add_index "users", ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: {"email"=>"gin_trgm_ops"}'
       users_last_name_index = 'add_index "users", ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: {"last_name"=>"gin_trgm_ops"}'
+    else
+      users_email_index = 't.index ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: { email: "gin_trgm_ops" }'
+      users_last_name_index = 't.index ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: { last_name: "gin_trgm_ops" }'
     end
 
     schema_lines = dumped_schema_lines_from_test_app
@@ -25,10 +25,10 @@ RSpec.describe PostgramRaidexes do
   end
 
   it "doesn't mangle partial indicies" do
-    unless ENV["RAILS_4"]
-      expected_partial_index = 't.index ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
-    else
+    if ENV["RAILS_4"]
       expected_partial_index = 'add_index "users", ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
+    else
+      expected_partial_index = 't.index ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
     end
 
     schema_lines = dumped_schema_lines_from_test_app
@@ -37,10 +37,10 @@ RSpec.describe PostgramRaidexes do
   end
 
   it "doesn't mangle ordered indicies" do
-    unless ENV["RAILS_4"]
-      expected_ordered_index = 't.index ["last_name"], name: "index_users_on_last_name", order: { last_name: :desc }, using: :btree'
-    else
+    if ENV["RAILS_4"]
       expected_ordered_index = 'add_index "users", ["last_name"], name: "index_users_on_last_name", order: {"last_name"=>:desc}, using: :btree'
+    else
+      expected_ordered_index = 't.index ["last_name"], name: "index_users_on_last_name", order: { last_name: :desc }, using: :btree'
     end
 
     schema_lines = dumped_schema_lines_from_test_app
