@@ -187,7 +187,7 @@ module ActiveRecord
       index_parts << "using: #{index.using.inspect}" if index.using
       index_parts << "type: #{index.type.inspect}" if index.type
       index_parts << "comment: #{index.comment.inspect}" if index.comment
-      index_parts << "opclasses: #{index.opclasses}" if index.opclasses
+      index_parts << "opclasses: #{index.opclasses}" if index.opclasses.present?
       index_parts
     end
   end
