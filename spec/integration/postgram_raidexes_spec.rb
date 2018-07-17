@@ -6,8 +6,13 @@ RSpec.describe PostgramRaidexes do
   end
 
   it "dumps trigram indicies" do
-    users_email_index = 'add_index "users", ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: {"email"=>"gin_trgm_ops"}'
-    users_last_name_index = 'add_index "users", ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: {"last_name"=>"gin_trgm_ops"}'
+    if true
+      users_email_index = 't.index ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: { email: "gin_trgm_ops" }'
+      users_last_name_index = 't.index ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: { last_name: "gin_trgm_ops" }'
+    else
+      users_email_index = 'add_index "users", ["email"], name: "index_users_on_email_trigram", using: :gin, opclasses: {"email"=>"gin_trgm_ops"}'
+      users_last_name_index = 'add_index "users", ["last_name"], name: "index_users_on_last_name_trigram", using: :gin, opclasses: {"last_name"=>"gin_trgm_ops"}'
+    end
 
     schema_lines = dumped_schema_lines_from_test_app
 
@@ -16,15 +21,27 @@ RSpec.describe PostgramRaidexes do
   end
 
   it "doesn't mangle partial indicies" do
-    expected_partial_index = 'add_index "users", ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
+    if true
+      expected_partial_index = 't.index ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
+    else
+      expected_partial_index = 'add_index "users", ["first_name"], name: "index_users_on_first_name", where: "(first_name IS NOT NULL)", using: :btree'
+    end
 
-    expect(dumped_schema_lines_from_test_app).to include_line(expected_partial_index)
+    schema_lines = dumped_schema_lines_from_test_app
+
+    expect(schema_lines).to include_line(expected_partial_index)
   end
 
   it "doesn't mangle ordered indicies" do
-    expected_partial_index = 'add_index "users", ["last_name"], name: "index_users_on_last_name", order: {"last_name"=>:desc}, using: :btree'
+    if true
+      expected_ordered_index = 't.index ["last_name"], name: "index_users_on_last_name", order: { last_name: :desc }, using: :btree'
+    else
+      expected_ordered_index = 'add_index "users", ["last_name"], name: "index_users_on_last_name", order: {"last_name"=>:desc}, using: :btree'
+    end
 
-    expect(dumped_schema_lines_from_test_app).to include_line(expected_partial_index)
+    schema_lines = dumped_schema_lines_from_test_app
+
+    expect(schema_lines).to include_line(expected_ordered_index)
   end
 
   private
@@ -55,7 +72,7 @@ RSpec.describe PostgramRaidexes do
   RSpec::Matchers.define :include_line do |expected_line|
     match do |lines|
       lines.any? do |actual_line|
-        actual_line.strip == expected_line
+        actual_line.strip.include?(expected_line)
       end
     end
   end
