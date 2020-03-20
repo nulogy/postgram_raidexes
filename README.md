@@ -1,3 +1,5 @@
+## This repository has been archived. Use Rails >= 5.2 instead
+
 # postgram_raidexes
 
 ## *Post*(gres) (Tri)*gram* *Rai*(ls) (In)*dexes*
